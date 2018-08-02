@@ -16,7 +16,7 @@
     <img class="img-overlay" src="http://rave.digital/img/raveLogo_750x336.png" style="width:100px;">
   </a>  
 </nav>
-
+                        //PHP implentation starts here
 <?php
 if(isset($_GET['email'])){
     function getref($len)
