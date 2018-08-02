@@ -12,10 +12,11 @@
 <body>
 
 <nav class="navbar navbar-expand-sm bg-light navbar-light justify-content-center fixed-top">
-  <a class="nabar-brand">
+  <a class="nabar-brand ">
     <img class="img-overlay" src="http://rave.digital/img/raveLogo_750x336.png" style="width:100px;">
   </a>  
 </nav>
+
 <?php
 if(isset($_GET['email'])){
     function getref($len)
@@ -29,20 +30,20 @@ if(isset($_GET['email'])){
   }
 
   $customer_email = $_GET['email'];
-  $amount =3000;  
+  $amount =10000;  
   $currency = "NGN";
   $txref = getref(10); // ensure you generate unique references per transaction.
   $PBFPubKey = "FLWPUBK-2b22ba4979986f2d658e78d2f4d34015-X"; // get your public key from the dashboard.
-  $redirect_url = "http://18.222.172.51/rave/index.php";
-  $payment_plan = "" ;// this is only required for recurring payments.
+  $redirect_url = "https://my-rave-demo.herokuapp.com/index.php";
+  $payment_plan = "";// this is only required for recurring payments.
 
   $curl = curl_init();
   curl_setopt_array($curl, array(
     CURLOPT_URL => "https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/v2/hosted/pay",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_SSL_VERIFYPEER => false,
-    CURLOPT_CUSTOMREQUEST => "GET",
-    CURLOPT_GETFIELDS => json_encode([
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => json_encode([
       'amount'=>$amount,
       'customer_email'=>$customer_email,
       'currency'=>$currency,
@@ -91,8 +92,8 @@ else if(isset($_GET['txref'])){
         $data_string = json_encode($query);
                 
         $ch = curl_init('https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/v2/verify');                                                                      
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($ch, CURLOPT_GETFIELDS, $data_string);                                              
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                              
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
@@ -112,55 +113,58 @@ else if(isset($_GET['txref'])){
         $chargeAmount = $resp['data']['amount'];
         $chargeCurrency = $resp['data']['currency'];
         //var_dump($resp);
-echo '	<div class="jumbotron" style="text-align:center;">';
+echo '<div class="jumbotron" style="text-align: center; margin-top:120px;"><br><br><br><br>';
 if ($chargeResponsecode == "00" || $chargeResponsecode == "0") {
     # code...
     // TIP: you may still verify the transaction
         // before giving value.
 ?>
-<div id="successfull" class="">
-			<h3>Congratulations! You have sucessfully purchased the item.<br>
-			<strong>Your Reference Id is: </strong><span class="badge badge-success">XXXXX</span></h3>
-		</div>
+    <div id="successfull" class="">
+     <h3> Congratulations! You have sucessfully purchased the item.<br>
+      <strong>Your Reference Id is: </strong><span class="badge badge-success"><?=$_GET['txref']?></span></h3>
+
+    </div>
 <?php
-}else{
+} else {
 ?>  
-		<div id="unsuccessfull" class="">
-			<h3>Sorry! It seems there was an error with your purchase. Please try <a class="" href="#">again.</a><br>
-			<strong>Your Reference Id is: </strong><span class="badge badge-danger">XXXXX</span></h3>
-		</div>
-	</div>
+  <div id="unsuccessfull" class="">
+      <h3>Sorry! It seems there was an error with your purchase. Please try <a class="" href="https://my-rave-demo.herokuapp.com/index.php">again.</a><br>
+      <strong>Your Reference Id is: </strong><span class="badge badge-danger"><?=$_GET['txref']?></span></h3>
+  </div>
 <?php
 }
 echo '</div>';
 // exit();
 }else{
 ?>
- 
-	<div class="container col-sm-4" style="margin-top:80px;">
-		<div class="card ">
-			<h3 class="card-title" style="text-align: center;">Like what you see?</h3>
-			<div class="card body">
-				<img class="img-fluid" src="http://4.bp.blogspot.com/-VIPRQsOYI0M/U5UDywBoC7I/AAAAAAAAN7A/INMsxguBLKQ/s1600/Watercolor-Landscape.jpg" alt="watercolor-painting">
-				<blockquote>The Reverie is a watercolor painting by renowned artist <strong>Temi Adesanya</strong>. It is composed of watercolor on arches paper and is priced at <span class="badge badge-info">N5,000</span></blockquote>
-			</div>
-				<button class="btn btn-primary" data-toggle="collapse" data-target="#card">Proceed</button>
-        <div id="card" class="collapse">
-          <form class="form-group"  action="">
-          	<hr>
+<div class="container col-sm-4" style="margin-top:80px">
+  
+  <div class="card">
+    <h3 class="card-title " style="text-align:center;">Do you want to buy this item? </h3>
+     <img class="img-fluid" src="http://4.bp.blogspot.com/-VIPRQsOYI0M/U5UDywBoC7I/AAAAAAAAN7A/INMsxguBLKQ/s1600/Watercolor-Landscape.jpg" alt="watercolor-painting">
+
+ <div class="card body">
+        
+        <blockquote>The Reverie is a watercolor painting by renowned artist <strong>Temi Adesanya</strong>. It is composed of watercolor on arches paper and is priced at <span class="badge badge-info" style="font-size: 15px;">N10,000</span></blockquote>
+      </div>
+      <button class="btn btn-success " data-toggle="collapse" data-target="#buy">Proceed</button>
+        <div id="buy" class="collapse">
+          <form class="form-group" action="">
+            <hr>
             <input class="form-control" type="text" name="email" placeholder="E-mail"><br>
-            <button class="btn btn-warning" type="submit">Pay with RAVE</button>
+            <button class="btn btn-warning" type="submit" name="">Pay with RAVE</button>
           </form>
         </div>
-		</div>
-</div>
+  </div>
 
+</div>
 <?php
 }
 ?>
+</body>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
-
+<script type="text/javascript" src="https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/flwpbf-inline.js"></script>
 </html>
