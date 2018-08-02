@@ -1,5 +1,5 @@
 # DEMO RAVE API INTEGRATION
-This is a simple implementation of the rave api using their test environment uri. Click on the link below to try the hosted solution.
+This is a simple implementation of the rave api using their test environment uri. Here rave payment gateway is used to collect payments across multiple payment channels and currencies from customers. Click on the link below to try the hosted solution.
 
 The index.php file contains both the html-base embedded into php implementation of the standard rave API.
 
